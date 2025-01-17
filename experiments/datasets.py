@@ -6,6 +6,7 @@ import vecs_io
 
 @dataclass
 class Dataset:
+    name: str
     db_filename: str
     query_filename: str
     gt_filename: str
@@ -58,6 +59,7 @@ def select_dataset(dirname, name):
     gt = vecs_io.ivecs_read(gt_filename)
 
     return Dataset(
+        name,
         db_filename,
         query_filename,
         gt_filename,
