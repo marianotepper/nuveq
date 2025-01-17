@@ -48,7 +48,7 @@ params, loss_value = model.optimize(data)
 print('Optimization loss', loss_value)
 a_ae, b_ae = params.distribution_params
 
-loss_fun = lambda sol: model.loss(
+loss_fun = lambda sol: model.relative_loss(
     data[:, np.newaxis, np.newaxis],
     NVQParams(params.x_min, params.x_max, sol)
 )

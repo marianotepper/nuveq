@@ -51,7 +51,7 @@ def plot_nuveq_single_vector(vector, nonlinearity):
         p1_limits = (1e-6, params.distribution_params[0] * 3)
 
 
-    loss_fun = lambda sol: model.loss(
+    loss_fun = lambda sol: model.relative_loss(
             vector[:, np.newaxis, np.newaxis],
             NVQParams(params.x_min, params.x_max, sol)
     )
