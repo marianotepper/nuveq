@@ -1,3 +1,4 @@
+from multiprocess import Pool
 import numpy as np
 import plotly.io as pio
 import plotly.graph_objects as go
@@ -18,22 +19,22 @@ def plot_nuveq_multi_vector(data):
     ls_loss_logistic = []
     ls_loss_nqt = []
 
-    for i, vector in enumerate(data):
-        for nonlinearity, ls in [('logistic', ls_loss_logistic),
-                                 ('kumaraswamy', ls_loss_kumaraswamy),
-                                 ('NQT', ls_loss_nqt)]:
-            model = NonuniformVectorQuantization(n_bits,
-                                                 nonlinearity=nonlinearity)
+    for nonlinearity, ls in [('logistic', ls_loss_logistic),
+                             ('kumaraswamy', ls_loss_kumaraswamy),
+                             ('NQT', ls_loss_nqt)]:
+        model = NonuniformVectorQuantization(n_bits,
+                                             nonlinearity=nonlinearity)
+
+        def run_single_vector(vector):
             _, loss_value = model.optimize(vector)
+            return loss_value
 
-            ls.append(loss_value)
+        with Pool() as p:
+            ls_local = p.map(run_single_vector, data)
 
-    print('Mean loss with Kumaraswamy nonlinearity',
-          np.mean(ls_loss_kumaraswamy))
-    print('Mean loss with scaled logistic nonlinearity',
-          np.mean(ls_loss_logistic))
-    print('Mean loss with NQT nonlinearity',
-          np.mean(ls_loss_nqt))
+        ls.extend(ls_local)
+        print(f'Mean loss with {nonlinearity} nonlinearity',
+              np.mean(ls))
 
     upper_diagonal = 1.1 * max([np.max(ls_loss_kumaraswamy),
                                 np.max(ls_loss_logistic),
@@ -107,7 +108,7 @@ def main():
 
     data -= np.mean(data, axis=0, keepdims=True)
 
-    plot_nuveq_multi_vector(data[:1_000])
+    plot_nuveq_multi_vector(data[:10_000])
 
 if __name__ == '__main__':
     main()

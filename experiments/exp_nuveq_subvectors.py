@@ -1,3 +1,4 @@
+from multiprocess import Pool
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -11,10 +12,8 @@ from datasets import select_dataset
 pio.templates.default = "plotly_white"
 
 
-def plot_nuveq_multi_vector(data, n_bits):
+def plot_nuveq_multi_vector(data):
     ls_n_subvectors = [1, 2, 4, 8]
-
-    print(f'{n_bits} bits')
 
     records = []
 
@@ -22,22 +21,27 @@ def plot_nuveq_multi_vector(data, n_bits):
                                    ('kumaraswamy', 'Kumaraswamy'),
                                    ('NQT', 'NQT')]:
         for ns in ls_n_subvectors:
-            model = NonuniformVectorQuantization(n_bits,
+            model = NonuniformVectorQuantization(n_bits=8,
                                                  n_subvectors=ns,
                                                  nonlinearity=nonlinearity)
 
-            for i, vector in enumerate(data):
+            def run_single_vector(vector):
                 _, loss_value = model.optimize(vector)
+                return dict(Nonlinearity=box_name,
+                            Subvectors=ns,
+                            Loss=loss_value)
 
-                records.append(
-                    dict(Nonlinearity=box_name,
-                         Subvectors=ns,
-                         Loss=loss_value)
-                )
+            with Pool() as p:
+                records_local = p.map(run_single_vector, data)
+
+            records.extend(records_local)
 
     df = pd.DataFrame.from_records(records)
 
-    fig = px.box(df, x='Nonlinearity', y='Loss', color='Subvectors')
+    print(df.groupby(['Nonlinearity', 'Subvectors'], as_index=False).mean())
+
+    fig = px.box(df, x='Nonlinearity', y='Loss', color='Subvectors',
+                 points=False)
     fig.add_hline(y=1, line=dict(dash='dash', color='black'))
     fig.add_annotation(text='Uniform',
                        x=0.5, y=1, xref='paper',
@@ -57,13 +61,13 @@ def main():
     # dataset = select_dataset(dirname, 'gecko-100k')
     # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
     # dataset = select_dataset(dirname, 'colbert-1M')
+    print(dataset.name)
 
     data = dataset.X_db
 
     data -= np.mean(data, axis=0, keepdims=True)
 
-    plot_nuveq_multi_vector(data[:100], 4)
-    plot_nuveq_multi_vector(data[:100], 8)
+    plot_nuveq_multi_vector(data[:100])
 
 if __name__ == '__main__':
     main()
