@@ -118,8 +118,6 @@ def plot_nuveq_single_vector(vector, nonlinearity):
 
     fig.write_image(f'exp_nuveq_cross_cuts_{nonlinearity}.pdf')
 
-    return
-
     # -----------------------------------
     p0_ls = np.linspace(*p0_limits,
                         num=300, endpoint=True)
