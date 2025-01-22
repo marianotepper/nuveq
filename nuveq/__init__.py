@@ -1,1 +1,1 @@
-from .nuveq import NonuniformVectorQuantization, NVQParams
+from .nuveq import NonuniformVectorQuantization, NVQParams, forward_kumaraswamy
