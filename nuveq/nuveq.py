@@ -24,13 +24,18 @@ def inverse_kumaraswamy(y, a, b):
     return z
 
 
-def loss_kumaraswamy(sol, data, n_bits, x_min, x_max):
+def quantize_kumaraswamy(sol, data, n_bits, x_min, x_max):
     a, b = sol[0], sol[1]
     z = normalize(data, x_min, x_max)
     z = forward_kumaraswamy(z, a, b)
     z = quantize(z, n_bits)
     z = inverse_kumaraswamy(z, a, b)
     z = denormalize(z, x_min, x_max)
+    return z
+
+
+def loss_kumaraswamy(sol, data, n_bits, x_min, x_max):
+    z = quantize_kumaraswamy(sol, data, n_bits, x_min, x_max)
     diff = z - data
     return np.sum(diff ** 2)
 
@@ -69,7 +74,8 @@ def normalized_logit(logit_fun, y, alpha, x0, scale, bias):
     return logit_fun(y_scaled, alpha, x0)
 
 
-def loss_logistic(sol, data, n_bits, x_min, x_max, logistic_fun, logit_fun):
+def quantize_logistic(sol, data, n_bits, x_min, x_max, logistic_fun,
+                      logit_fun):
     delta = x_max - x_min
     alpha = sol[0] / delta
     x0 = sol[1] * delta
@@ -80,17 +86,27 @@ def loss_logistic(sol, data, n_bits, x_min, x_max, logistic_fun, logit_fun):
     z = normalized_logistic(logistic_fun, data, alpha, x0, scale, bias)
     z = quantize(z, n_bits)
     z = normalized_logit(logit_fun, z, alpha, x0, scale, bias)
+    return z
+
+
+def loss_logistic(sol, data, n_bits, x_min, x_max, logistic_fun, logit_fun):
+    z = quantize_logistic(sol, data, n_bits, x_min, x_max, logistic_fun,
+                          logit_fun)
     diff = z - data
     return np.sum(diff ** 2)
 
 
-def loss_uniform(data, n_bits):
+def quantize_uniform(data, n_bits):
     x_min = data.min()
     x_max = data.max()
 
     z = normalize(data, x_min, x_max)
     z = quantize(z, n_bits)
     z = denormalize(z, x_min, x_max)
+    return z
+
+def loss_uniform(data, n_bits):
+    z = quantize_uniform(data, n_bits)
     return np.sum((data - z) ** 2)
 
 
@@ -126,7 +142,7 @@ class NonuniformVectorQuantization:
         elif self.nonlinearity == 'logistic' or self.nonlinearity == 'NQT':
             delta = x_max - x_min
             init_sol = np.array([10., 0.])
-            bounds = [(1e-6, np.inf), (x_min / delta, x_max / delta)]
+            bounds = [(1e-6, 50), (x_min / delta, x_max / delta)]
             sigma = np.array([2, 0.5])
         else:
             raise ValueError('Unknown nonlinearity')
@@ -201,6 +217,9 @@ class NonuniformVectorQuantization:
         return loss
 
     def relative_loss(self, data, params):
+        if self.n_subvectors == 1:
+            params = [params]
+
         baseline = loss_uniform(data, self.n_bits)
 
         loss = 0
@@ -212,3 +231,26 @@ class NonuniformVectorQuantization:
 
         return baseline / loss
 
+    def quantize(self, data, params):
+        if self.n_subvectors == 1:
+            params = [params]
+
+        vector_rec = []
+        for subvector, par in zip(self.split_in_subvectors(data), params):
+            if self.nonlinearity == 'kumaraswamy':
+                qsv = quantize_kumaraswamy(par.distribution_params, subvector,
+                                           self.n_bits, par.x_min, par.x_max)
+            elif self.nonlinearity == 'logistic':
+                qsv = quantize_logistic(par.distribution_params, subvector,
+                                        self.n_bits, par.x_min, par.x_max,
+                                        logistic, logit)
+            elif self.nonlinearity == 'NQT':
+                qsv = quantize_logistic(par.distribution_params, subvector,
+                                        self.n_bits, par.x_min, par.x_max,
+                                        logistic_nqt, logit_nqt)
+            else:
+                raise ValueError('Unknown nonlinearity')
+
+            vector_rec.append(qsv)
+
+        return np.hstack(vector_rec)
