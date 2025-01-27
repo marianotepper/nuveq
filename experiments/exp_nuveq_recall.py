@@ -98,7 +98,6 @@ def plot_nuveq_multi_vector(dataset, n_bits):
     fig = make_subplots(
         rows=1, cols=3,
         subplot_titles=('Reconstruction MSE',  'Query dot product MSE', 'MAP'),
-        # figsize=(10, 3)
     )
 
     for i, (nonlinearity, plot_name) in enumerate(nonlinearities):
@@ -169,7 +168,7 @@ def main():
     print(dataset.name)
 
     plot_nuveq_multi_vector(dataset, 4)
-    # plot_nuveq_multi_vector(dataset.X_query, dataset.X_db, dataset.gt, 8)
+    # plot_nuveq_multi_vector(dataset, 8)
 
 if __name__ == '__main__':
     main()
