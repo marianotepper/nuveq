@@ -20,10 +20,6 @@ def plot_nuveq_multi_vector(dataset, n_bits):
                       ('kumaraswamy', 'Kumaraswamy'),
                       ('NQT', 'NQT')]
 
-    nonzero_mask = np.linalg.norm(X_query, axis=1) > 0
-    X_query = X_query[nonzero_mask]
-    idx_gt = idx_gt[nonzero_mask]
-
     mean = np.mean(X_db, axis=0, keepdims=True)
 
     ls_n_subvectors = [1, 2, 4, 8]
