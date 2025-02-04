@@ -58,6 +58,10 @@ def select_dataset(dirname, name):
     X_query = vecs_io.fvecs_read(query_filename)
     gt = vecs_io.ivecs_read(gt_filename)
 
+    nonzero_mask = np.linalg.norm(X_query, axis=1) > 0
+    X_query = X_query[nonzero_mask]
+    gt = gt[nonzero_mask]
+
     return Dataset(
         name,
         db_filename,
