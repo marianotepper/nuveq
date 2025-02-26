@@ -11,6 +11,7 @@ from accuracy_metrics import compute_recall
 from datasets import select_dataset
 from experiments.accuracy_metrics import compute_map
 from nuveq import NonuniformVectorQuantization
+from plot_utils import write_image
 
 
 def plot_nuveq_multi_vector(dataset, n_bits):
@@ -151,20 +152,17 @@ def plot_nuveq_multi_vector(dataset, n_bits):
         margin={'l': 0, 'r': 0, 't': 60, 'b': 0},
     )
     fig.show()
-    fig.write_image(f'recall_{dataset.name}.pdf')
+    write_image(fig, f'subvectors_{dataset.name}_{n_bits}bits.pdf')
 
 
 def main():
     dirname = sys.argv[1]
-    dataset = select_dataset(dirname, 'ada002-100k')
-    # dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    # dataset = select_dataset(dirname, 'gecko-100k')
-    # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
-    # dataset = select_dataset(dirname, 'colbert-1M')
-    print(dataset.name)
 
-    plot_nuveq_multi_vector(dataset, 4)
-    # plot_nuveq_multi_vector(dataset, 8)
+    for dataset_name in ['ada002-100k', 'openai-v3-small-100k']:
+        dataset = select_dataset(dirname, dataset_name)
+        print(dataset.name)
+        plot_nuveq_multi_vector(dataset, 4)
+
 
 if __name__ == '__main__':
     main()
