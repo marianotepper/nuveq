@@ -8,11 +8,17 @@ import timeit
 
 from nuveq import NonuniformVectorQuantization, NVQParams
 from datasets import select_dataset
+from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 
 
-def plot_nuveq_single_vector(vector, nonlinearity):
+def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx):
+    dataset = select_dataset(dirname, dataset_name)
+    data = dataset.X_db
+    data -= np.mean(data, axis=0, keepdims=True)
+    vector = data[idx]
+
     n_bits = 8
 
     print(f'{nonlinearity} @ {n_bits} bits')
@@ -29,24 +35,24 @@ def plot_nuveq_single_vector(vector, nonlinearity):
     # return
 
     if nonlinearity == 'logistic':
-        param0_name = r'$\alpha$'
-        param1_name = r'$x_0$'
-        p0_limits = (1e-6, 10)
+        param0_name = r'$\LARGE{\alpha}$'
+        param1_name = r'$\LARGE{x_0}$'
+        p0_limits = (1e-6, 15)
 
         x_min = vector.min()
         x_max = vector.max()
         p1_limits = (x_min / (x_max - x_min), x_max / (x_max - x_min))
     if nonlinearity == 'NQT':
-        param0_name = r'$\alpha$'
-        param1_name = r'$x_0$'
+        param0_name = r'$\LARGE{\alpha}$'
+        param1_name = r'$\LARGE{x_0}$'
         p0_limits = (1e-6, 20)
 
         x_min = vector.min()
         x_max = vector.max()
         p1_limits = (x_min / (x_max - x_min), x_max / (x_max - x_min))
     elif nonlinearity == 'kumaraswamy':
-        param0_name = 'a'
-        param1_name = 'b'
+        param0_name = r'$\LARGE{a}$'
+        param1_name = r'$\LARGE{b}$'
         p0_limits = (1e-6, params.distribution_params[0] * 3)
         p1_limits = (1e-6, params.distribution_params[0] * 3)
 
@@ -111,12 +117,16 @@ def plot_nuveq_single_vector(vector, nonlinearity):
 
     fig.update_layout(
         legend=dict(x=0.5, y=1.02, orientation="h",
-                    yanchor="bottom", xanchor="center")
+                    yanchor="bottom", xanchor="center"),
+        font=dict(size=20),
+        autosize=True,
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 65},
     )
 
     fig.show()
 
-    fig.write_image(f'exp_nuveq_cross_cuts_{nonlinearity}.pdf')
+    write_image(fig, f'single_vector_cross_cuts_{dataset.name}_{nonlinearity}.png',
+                scale=3)
 
     # -----------------------------------
     p0_ls = np.linspace(*p0_limits,
@@ -161,28 +171,24 @@ def plot_nuveq_single_vector(vector, nonlinearity):
     fig.update_traces(zmid=1, selector=dict(type='contour'))
     fig.update_xaxes(title_text=param0_name)
     fig.update_yaxes(title_text=param1_name)
+    fig.update_layout(
+        font=dict(size=20),
+        autosize=True,
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 60},
+    )
 
     fig.show()
 
-    fig.write_image(f'exp_nuveq_ratio_{nonlinearity}.png', scale=3)
+    write_image(fig, f'single_vector_ratio_{dataset.name}_{nonlinearity}.png')
 
 
 def main():
     dirname = sys.argv[1]
-    dataset = select_dataset(dirname, 'ada002-100k')
-    # dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    # dataset = select_dataset(dirname, 'gecko-100k')
-    # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
-    # dataset = select_dataset(dirname, 'colbert-1M')
-
-    data = dataset.X_db
-
-    data -= np.mean(data, axis=0, keepdims=True)
 
     idx = 1
-    plot_nuveq_single_vector(data[idx], 'logistic')
-    plot_nuveq_single_vector(data[idx], 'NQT')
-    plot_nuveq_single_vector(data[idx], 'kumaraswamy')
+    for dataset_name in ['ada002-100k', 'openai-v3-small-100k']:
+        for nonlinearity in ['kumaraswamy', 'logistic', 'NQT']:
+            plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx)
 
 
 if __name__ == '__main__':

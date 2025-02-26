@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import time
 
 
 def build_histogram2d(fig, x, colorscale=None):
@@ -62,3 +63,8 @@ def build_histogram2d(fig, x, colorscale=None):
         hovermode='closest',
         showlegend=False
     )
+
+def write_image(fig, filename, scale=None):
+    fig.write_image(filename, scale=scale)
+    time.sleep(2)
+    fig.write_image(filename, scale=scale)
