@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 from nuveq import forward_kumaraswamy
+from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 
@@ -19,6 +20,8 @@ fig.update_layout(
     xaxis=dict(range=[0, 1]),
     yaxis=dict(range=[0, 1.01], scaleanchor="x"),
     font=dict(size=18),
+    autosize=True,
+    margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
 )
 fig.show()
-fig.write_image('kumaraswamy_parameter_examples.pdf')
+write_image(fig, 'kumaraswamy_parameter_examples.pdf')

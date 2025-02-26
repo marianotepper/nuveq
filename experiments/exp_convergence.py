@@ -8,12 +8,18 @@ import sys
 
 from datasets import select_dataset
 from nuveq import NonuniformVectorQuantization
+from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 pio.kaleido.scope.mathjax = None
 
 
-def plot_convergence_single_vector(vector, n_bits):
+def plot_convergence_single_vector(dirname, dataset_name, n_bits, id):
+    dataset = select_dataset(dirname, dataset_name)
+    data = dataset.X_db
+    data -= np.mean(data, axis=0, keepdims=True)
+    vector = data[id]
+
     n_seeds = 100
 
     nonlinearities = ['logistic', 'NQT', 'kumaraswamy']
@@ -96,17 +102,23 @@ def plot_convergence_single_vector(vector, n_bits):
             xanchor="center",
             x=0.5
         ),
+        xaxis_title='Iterations',
         font=dict(size=20),
     )
 
     # fig.update_layout(title=dict(text=f'{n_bits} bits - {n_dims} dimensions',
     #                              x=0.5, xanchor='center'))
     fig.show()
-    # fig.write_image(f'exp_truncnorm_improvement_{n_dims}-dims.pdf')
+    write_image(fig, f'convergence_improvement_{n_bits}-bits.pdf')
 
 
 
-def plot_convergence_iterations(X, n_bits, generate_from_scratch=True):
+def plot_convergence_iterations(dirname, dataset_name, n_bits, n_samples=1000):
+    dataset = select_dataset(dirname, dataset_name)
+    X = dataset.X_db
+    X -= np.mean(X, axis=0, keepdims=True)
+    X = X[:n_samples]
+
     # rng = np.random.default_rng(1)
     #
     # generate_from_scratch = False
@@ -152,33 +164,15 @@ def plot_convergence_iterations(X, n_bits, generate_from_scratch=True):
         xaxis_title=None,
     )
     fig.show()
-    # fig.write_image(f'exp_truncnorm_improvement_{n_dims}-dims.pdf')
+    write_image(fig, f'convergence_iterations_{dataset_name}.pdf')
 
 
 def main():
     dirname = sys.argv[1]
-    dataset = select_dataset(dirname, 'ada002-100k')
-    # dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    # dataset = select_dataset(dirname, 'gecko-100k')
-    # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
-    # dataset = select_dataset(dirname, 'colbert-1M')
 
-    data = dataset.X_db
-
-    data -= np.mean(data, axis=0, keepdims=True)
-
-    generate_from_scratch = True
-    # for nonlinearity in ['logistic', 'NQT', 'kumaraswamy']:
-    # for nonlinearity in ['NQT']:
-    #     plot_convergence(data[:100], nonlinearity, 4,
-    #                      generate_from_scratch)
-
-    # plot_convergence_single_vector(data[2], 4)
-    # plot_convergence_single_vector(data[2], 8)
-    # plot_convergence_single_vector(data[3], 4)
-    # plot_convergence_single_vector(data[3], 8)
-
-    plot_convergence_iterations(data[:1_000], 8)
+    plot_convergence_single_vector(dirname, 'ada002-100k', 4, id=2)
+    plot_convergence_single_vector(dirname, 'ada002-100k', 8, id=2)
+    plot_convergence_iterations(dirname, 'ada002-100k', 8, n_samples=1000)
 
 
 if __name__ == '__main__':

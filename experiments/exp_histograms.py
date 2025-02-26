@@ -5,16 +5,21 @@ import plotly.graph_objects as go
 import sys
 
 from datasets import select_dataset
+from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 
 
-def plot_histograms(X):
+def plot_histograms(dirname, dataset_name, ids):
+    dataset = select_dataset(dirname, dataset_name)
+
+    X = dataset.X_db
+    X -= np.mean(X, axis=0, keepdims=True)
+    X = X[ids]
 
     # -----------------------------------
     # fig = px.histogram(vector, nbins=100)
 
-    fig = go.Figure()
     hist_data = [vector for vector in X]
     group_labels = [f'Vector {i+1}' for i in range(len(X))]
 
@@ -30,31 +35,32 @@ def plot_histograms(X):
     fig.update_traces(opacity=0.75)
 
     fig.update_layout(
+        xaxis=dict(
+            tickmode='linear',
+            tick0=-0.05,
+            dtick=0.05
+        ),
+        yaxis = dict(
+            tickmode='linear',
+            tick0=0,
+            dtick=5
+        ),
         showlegend=False,
-        font=dict(size=20),
+        font=dict(size=25),
+        autosize=True,
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
 
     fig.show()
 
-    # fig.write_image(f'exp_nuveq_cross_cuts_{nonlinearity}.pdf')
+    write_image(fig, f'histograms_{dataset_name}.pdf')
 
 
 def main():
     dirname = sys.argv[1]
 
-    dataset = select_dataset(dirname, 'gecko-100k')
-    ids = [2, 4, 8, 10]
-
-    data = dataset.X_db
-    data -= np.mean(data, axis=0, keepdims=True)
-    plot_histograms(data[ids])
-
-    dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    ids = [2, 4, 6, 8]
-
-    data = dataset.X_db
-    data -= np.mean(data, axis=0, keepdims=True)
-    plot_histograms(data[ids])
+    plot_histograms(dirname, 'gecko-100k', [2, 4, 8, 10])
+    plot_histograms(dirname, 'openai-v3-small-100k', [2, 4, 6, 8])
 
 
 if __name__ == '__main__':
