@@ -54,10 +54,13 @@ def plot_nuveq_multi_vector(dirname, dataset_name, n_samples=10_000):
         go.Scatter(name='iso-line',
                    x=[1, upper_diagonal], y=[1, upper_diagonal], mode='lines',
                    line=dict(dash='dash', color='black')),
+        go.Scatter(name='Uniform',
+                   x=[1], y=[1],
+                   marker=dict(size=[15], symbol='circle-dot',
+                               line_width=3, line_color='#e41a1c',
+                               color='white'),
+                   mode='markers'),
     ])
-    fig.add_annotation(text='Uniform', x=1, y=1,
-                       arrowwidth=2,
-                       showarrow=True, arrowhead=3)
     fig.update_xaxes(title_text='Loss with Kumaraswamy')
     fig.update_yaxes(title_text='Loss with Log-Log')
     fig.update_layout(
@@ -76,11 +79,14 @@ def plot_nuveq_multi_vector(dirname, dataset_name, n_samples=10_000):
                    mode='markers'),
         go.Scatter(name='iso-line',
                    x=[1, upper_diagonal], y=[1, upper_diagonal], mode='lines',
-                   line=dict(dash='dash', color='black')),
+                   line=dict(dash='dash', width=3, color='black')),
+        go.Scatter(name='Uniform',
+                   x=[1], y=[1],
+                   marker=dict(size=[15], symbol='circle-dot',
+                               line_width=3, line_color='#e41a1c',
+                               color='white'),
+                   mode='markers'),
     ])
-    fig.add_annotation(text='Uniform', x=1, y=1,
-                       arrowwidth=2,
-                       showarrow=True, arrowhead=3)
     fig.update_xaxes(title_text='Loss with Log-Log')
     fig.update_yaxes(title_text='Loss with NQT')
     fig.update_layout(
