@@ -32,7 +32,7 @@ def plot_histograms(dirname, dataset_name, ids):
     # Overlay both histograms
     fig.update_layout(barmode='overlay')
     # Reduce opacity to see both histograms
-    fig.update_traces(opacity=0.75)
+    fig.update_traces(opacity=0.75, line=dict(width=5))
 
     fig.update_layout(
         xaxis=dict(
