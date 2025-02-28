@@ -24,7 +24,7 @@ for i, (a, b, dash) in enumerate([(1, 1, 'solid'), (0.5, 0.5, 'dash'),
                                   (1, 5, 'longdashdot')]):
     fig.add_trace(
         go.Scatter(name=f'a={a}, b={b}', x=x, y=kumaraswamy_pdf(x, a, b),
-                   line=dict(dash=dash, color=palette[i], width=3),
+                   line=dict(dash=dash, color=palette[i], width=5),
                    showlegend=False,
                    mode='lines'),
         row=1, col=1
@@ -32,7 +32,7 @@ for i, (a, b, dash) in enumerate([(1, 1, 'solid'), (0.5, 0.5, 'dash'),
 
     fig.add_trace(
         go.Scatter(name=f'a={a}, b={b}', x=x, y=forward_kumaraswamy(x, a, b),
-                   line=dict(dash=dash, color=palette[i], width=3),
+                   line=dict(dash=dash, color=palette[i], width=5),
                    mode='lines'),
         row=1, col=2
     )
