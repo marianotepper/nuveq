@@ -9,17 +9,18 @@ from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 
-x = np.linspace(0, 1, 1_000, endpoint=True)
+x = np.linspace(-1, 1, 1_000, endpoint=True)
+y = np.linspace(0, 1, 1_000, endpoint=True)
 
 palette = px.colors.qualitative.Plotly
 
 fig = make_subplots(rows=1, cols=2, subplot_titles=('Logistic',  'Logit'))
 
-for i, (alpha, x0, dash) in enumerate([(1, 0.5, 'solid'),
-                                       (7.5, 0.5, 'dot'), (15, 0.5, 'dashdot'),
-                                       (10, 0.35, 'dot'), (10, 0.65, 'dashdot')]):
-    bias = logistic(0, alpha, x0)
-    scale = logistic(1, alpha, x0) - bias
+for i, (alpha, x0, dash) in enumerate([(1, 0, 'solid'),
+                                       (7.5, 0, 'dot'), (15, 0, 'dashdot'),
+                                       (10, -0.3, 'dot'), (10, 0.3, 'dashdot')]):
+    bias = logistic(x.min(), alpha, x0)
+    scale = logistic(x.max(), alpha, x0) - bias
 
     str_alpha = f'{alpha}'
     str_x0 = f'{x0}'
@@ -36,18 +37,18 @@ for i, (alpha, x0, dash) in enumerate([(1, 0.5, 'solid'),
 
     fig.add_trace(
         go.Scatter(name=name,
-                   x=x, y=normalized_logit(logit, x, alpha, x0, scale, bias),
+                   x=y, y=normalized_logit(logit, y, alpha, x0, scale, bias),
                    line=dict(dash=dash, color=palette[i], width=5),
                    showlegend=False,
                    mode='lines'),
         row=1, col=2
     )
 
-fig.update_xaxes(range=[-0.05, 1.05], row=1, col=1)
+fig.update_xaxes(range=[-1.05, 1.05], row=1, col=1)
 fig.update_xaxes(range=[-0.05, 1.05], row=1, col=2)
 
 fig.update_yaxes(range=[-0.05, 1.05], row=1, col=1)
-fig.update_yaxes(range=[-0.05, 1.05], row=1, col=2)
+fig.update_yaxes(range=[-1.05, 1.05], row=1, col=2)
 
 fig.update_annotations(font_size=25)
 
