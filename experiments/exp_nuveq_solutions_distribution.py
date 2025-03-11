@@ -58,11 +58,6 @@ def plot_nuveq_solutions(dirname, dataset_name, nonlinearity, plot_title,
 
 def main():
     dirname = sys.argv[1]
-    # # dataset = select_dataset(dirname, 'ada002-100k')
-    # # dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    # dataset = select_dataset(dirname, 'gecko-100k')
-    # # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
-    # # dataset = select_dataset(dirname, 'colbert-1M')
 
     for dataset_name in ['gecko-100k', 'ada002-100k']:
         for nonlinearity, plot_title, xaxes_title, yaxes_title in [
