@@ -13,13 +13,12 @@ from plot_utils import write_image
 pio.templates.default = "plotly_white"
 
 
-def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx):
+def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx,
+                             n_bits=8):
     dataset = select_dataset(dirname, dataset_name)
     data = dataset.X_db
     data -= np.mean(data, axis=0, keepdims=True)
     vector = data[idx]
-
-    n_bits = 8
 
     print(f'{nonlinearity} @ {n_bits} bits')
 
@@ -125,7 +124,8 @@ def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx):
 
     fig.show()
 
-    write_image(fig, f'single_vector_cross_cuts_{dataset.name}_{nonlinearity}.png',
+    write_image(fig, f'single_vector_cross_cuts_{dataset.name}'
+                     f'_{nonlinearity}_{n_bits}bits.png',
                 scale=3)
 
     # -----------------------------------
@@ -179,7 +179,8 @@ def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx):
 
     fig.show()
 
-    write_image(fig, f'single_vector_ratio_{dataset.name}_{nonlinearity}.png')
+    write_image(fig, f'single_vector_ratio_{dataset.name}'
+                     f'_{nonlinearity}_{n_bits}bits.png')
 
 
 def main():
@@ -188,7 +189,10 @@ def main():
     idx = 1
     for dataset_name in ['ada002-100k', 'openai-v3-small-100k']:
         for nonlinearity in ['kumaraswamy', 'logistic', 'NQT']:
-            plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx)
+            for n_bits in [4, 8]:
+                plot_nuveq_single_vector(dirname, dataset_name, nonlinearity,
+                                         idx, n_bits=n_bits)
+
 
 
 if __name__ == '__main__':
