@@ -170,7 +170,7 @@ class ExponentialNES:
         else:
             iter_range = range(self.max_iter)
 
-        for _ in iter_range:
+        for iter in iter_range:
             # draw raw_samples
             raw_samples = rng.normal(size=(n_samples, n_dims))
             samples = mu + sigma * raw_samples
@@ -191,7 +191,8 @@ class ExponentialNES:
             sigma *= np.exp(delta_sigma * lr_sigma / 2)
 
             loss_history.append(fun(mu))
-            if np.abs(loss_history[-1] - loss_history[-2]) < self.tol:
+            loss_diff = np.abs(loss_history[-1] - loss_history[-2])
+            if iter > 10 and loss_diff < self.tol:
                 break
 
         if return_history:
