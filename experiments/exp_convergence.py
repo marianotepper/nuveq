@@ -100,14 +100,11 @@ def plot_convergence_single_vector(dirname, dataset_name, n_bits, id):
             yanchor="bottom",
             y=1.02,
             xanchor="center",
-            x=0.5
-        ),
+            x=0.5),
         xaxis_title='Iterations',
         font=dict(size=20),
     )
 
-    # fig.update_layout(title=dict(text=f'{n_bits} bits - {n_dims} dimensions',
-    #                              x=0.5, xanchor='center'))
     fig.show()
     write_image(fig, f'convergence_improvement_{n_bits}-bits.pdf')
 
@@ -158,10 +155,11 @@ def plot_convergence_iterations(dirname, dataset_name, n_bits, n_samples=1000):
 
     fig = px.box(df, x='Nonlinearity', y='Iterations', color='Nonlinearity')
 
+    fig.update_yaxes(rangemode="tozero")
     fig.update_layout(
+        xaxis_title=None,
         showlegend=False,
         font=dict(size=20),
-        xaxis_title=None,
     )
     fig.show()
     write_image(fig, f'convergence_iterations_{dataset_name}.pdf')
