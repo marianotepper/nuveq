@@ -113,8 +113,9 @@ def plot_nuveq_multi_vector(dirname, dataset_name, n_samples=10_000):
                        bgcolor='white',
                        showarrow=False)
     fig.update_layout(
-        font=dict(size=30),
+        font=dict(size=25),
         xaxis=dict(side='top'),
+        yaxis_title='Loss',
         autosize=True,
         margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
