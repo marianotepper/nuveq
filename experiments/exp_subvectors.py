@@ -12,7 +12,7 @@ from plot_utils import write_image
 pio.templates.default = "plotly_white"
 
 
-def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
+def plot_nuveq_subvectors(dirname, dataset_name, n_bits, n_samples=10_000):
     dataset = select_dataset(dirname, dataset_name)
     print(dataset.name)
 
@@ -22,7 +22,7 @@ def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
 
     ls_n_subvectors = [1, 2, 4, 8]
 
-    filename = f'./exp_nuveq_subvectors.pickle'
+    filename = f'./exp_nuveq_subvectors_{n_bits}bits.pickle'
     try:
         df = pd.read_pickle(filename)
     except FileNotFoundError:
@@ -32,7 +32,7 @@ def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
                                        ('kumaraswamy', 'Kumaraswamy'),
                                        ('NQT', 'NQT')]:
             for ns in ls_n_subvectors:
-                model = NonuniformVectorQuantization(n_bits=8,
+                model = NonuniformVectorQuantization(n_bits=n_bits,
                                                      n_subvectors=ns,
                                                      optimization_seed=0,
                                                      nonlinearity=nonlinearity)
@@ -53,8 +53,7 @@ def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
 
     print(df.groupby(['Nonlinearity', 'Subvectors'], as_index=False).mean())
 
-    fig = px.box(df, x='Nonlinearity', y='Loss', color='Subvectors',
-                 points=False)
+    fig = px.box(df, x='Nonlinearity', y='Loss', color='Subvectors')
     fig.add_hline(y=1, line=dict(dash='dash', color='black'))
     fig.add_annotation(text='Uniform',
                        x=0.5, y=1, xref='paper',
@@ -69,14 +68,15 @@ def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
         margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
     fig.show()
-    write_image(fig, f'subvectors_loss_{dataset.name}.pdf')
+    write_image(fig, f'subvectors_loss_{dataset.name}_{n_bits}bits.pdf')
 
 
 def main():
     dirname = sys.argv[1]
 
     dataset_name = 'ada002-100k'
-    plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000)
+    plot_nuveq_subvectors(dirname, dataset_name, 4, n_samples=10_000)
+    plot_nuveq_subvectors(dirname, dataset_name, 8, n_samples=10_000)
 
 if __name__ == '__main__':
     main()
