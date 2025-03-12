@@ -96,13 +96,15 @@ def plot_convergence_single_vector(dirname, dataset_name, n_bits, id):
     fig = go.Figure(data=data_plot)
     fig.update_layout(
         legend=dict(
-            orientation="h",
+            orientation="v",
             yanchor="bottom",
-            y=1.02,
-            xanchor="center",
-            x=0.5),
+            y=0.05,
+            xanchor="right",
+            x=0.95),
         xaxis_title='Iterations',
-        font=dict(size=20),
+        yaxis_title='Loss',
+        font=dict(size=25),
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
 
     fig.show()
@@ -159,7 +161,8 @@ def plot_convergence_iterations(dirname, dataset_name, n_bits, n_samples=1000):
     fig.update_layout(
         xaxis_title=None,
         showlegend=False,
-        font=dict(size=20),
+        font=dict(size=25),
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
     fig.show()
     write_image(fig, f'convergence_iterations_{dataset_name}.pdf')
