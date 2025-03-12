@@ -45,7 +45,7 @@ fig = go.Figure(data=[
 fig.update_xaxes(range=[x.min() - 0.02, x.max() + 0.02])
 fig.update_layout(
     title=dict(text='Logistic', x=0.5, xanchor='center'),
-    font=dict(size=30),
+    font=dict(size=25),
     showlegend=False,
     autosize=True,
     margin={'l': 0, 'r': 0, 't': 60, 'b': 0},
@@ -66,7 +66,7 @@ fig = go.Figure(data=[
 fig.update_xaxes(range=[-0.02, 1.02])
 fig.update_layout(
     title=dict(text='Logit', x=0.5, xanchor='center'),
-    font=dict(size=30),
+    font=dict(size=25),
     showlegend=False,
     autosize=True,
     margin={'l': 0, 'r': 0, 't': 60, 'b': 0},
@@ -91,7 +91,7 @@ fig.update_xaxes(range=[x.min() - 0.02, x.max() + 0.02])
 fig.update_yaxes(type='log', dtick=1)
 fig.update_layout(
     title=dict(text='Relative inversion error', x=0.5, xanchor='center'),
-    font=dict(size=30),
+    font=dict(size=25),
     yaxis=dict(
         title=dict(text='Error'),
         showexponent='all',
