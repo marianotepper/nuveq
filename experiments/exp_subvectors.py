@@ -7,11 +7,19 @@ import sys
 
 from nuveq import NonuniformVectorQuantization
 from datasets import select_dataset
+from plot_utils import write_image
 
 pio.templates.default = "plotly_white"
 
 
-def plot_nuveq_subvectors(data):
+def plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000):
+    dataset = select_dataset(dirname, dataset_name)
+    print(dataset.name)
+
+    data = dataset.X_db
+    data -= np.mean(data, axis=0, keepdims=True)
+    data = data[:n_samples]
+
     ls_n_subvectors = [1, 2, 4, 8]
 
     filename = f'./exp_nuveq_subvectors.pickle'
@@ -53,26 +61,22 @@ def plot_nuveq_subvectors(data):
                        bgcolor='white',
                        showarrow=False)
     fig.update_layout(
+        xaxis_title=None,
         font=dict(size=20),
         xaxis=dict(side='top'),
+        width=1300,
+        height=300,
+        margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
     )
     fig.show()
+    write_image(fig, f'subvectors_loss_{dataset.name}.pdf')
 
 
 def main():
     dirname = sys.argv[1]
-    dataset = select_dataset(dirname, 'ada002-100k')
-    # dataset = select_dataset(dirname, 'openai-v3-small-100k')
-    # dataset = select_dataset(dirname, 'gecko-100k')
-    # dataset = select_dataset(dirname, 'nv-qa-v4-100k')
-    # dataset = select_dataset(dirname, 'colbert-1M')
-    print(dataset.name)
 
-    data = dataset.X_db
-
-    data -= np.mean(data, axis=0, keepdims=True)
-
-    plot_nuveq_subvectors(data)
+    dataset_name = 'ada002-100k'
+    plot_nuveq_subvectors(dirname, dataset_name, n_samples=10_000)
 
 if __name__ == '__main__':
     main()
