@@ -152,7 +152,7 @@ def plot_nuveq_multi_vector(dataset, n_bits):
         margin={'l': 0, 'r': 0, 't': 60, 'b': 0},
     )
     fig.show()
-    write_image(fig, f'subvectors_{dataset.name}_{n_bits}bits.pdf')
+    write_image(fig, f'subvectors_recall_{dataset.name}_{n_bits}bits.pdf')
 
 
 def main():
@@ -162,6 +162,7 @@ def main():
         dataset = select_dataset(dirname, dataset_name)
         print(dataset.name)
         plot_nuveq_multi_vector(dataset, 4)
+        plot_nuveq_multi_vector(dataset, 8)
 
 
 if __name__ == '__main__':
