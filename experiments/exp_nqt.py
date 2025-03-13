@@ -37,13 +37,15 @@ x = np.linspace(-10, 10, num=1_000, endpoint=False)
 fig = go.Figure(data=[
     go.Scatter(name='NQT',
                x=x, y=logistic_nqt(x, 1, 0),
-               line=dict(width=3, color='#1b9e77')),
+               line=dict(width=5, color='#66c2a5')),
     go.Scatter(name='Base-2',
                x=x, y=logistic(x, 1, 0),
-               line=dict(dash='dash', width=3, color='#d95f02')),
+               line=dict(dash='dash', width=5, color='#d95f02')),
 ])
 fig.update_xaxes(range=[x.min() - 0.02, x.max() + 0.02])
 fig.update_layout(
+    height=350,
+    width=700,
     title=dict(text='Logistic', x=0.5, xanchor='center'),
     font=dict(size=25),
     showlegend=False,
@@ -58,13 +60,15 @@ x = np.linspace(1e-6, 1 - 1e-6, num=1_000, endpoint=True)
 fig = go.Figure(data=[
     go.Scatter(name='NQT',
                x=x, y=logit_nqt(x, 1, 0),
-               line=dict(width=3, color='#1b9e77')),
+               line=dict(width=5, color='#66c2a5')),
     go.Scatter(name='Base-2',
                x=x, y=logit(x, 1, 0),
-               line=dict(dash='dash', width=3, color='#d95f02')),
+               line=dict(dash='dash', width=5, color='#d95f02')),
 ])
 fig.update_xaxes(range=[-0.02, 1.02])
 fig.update_layout(
+    height=350,
+    width=700,
     title=dict(text='Logit', x=0.5, xanchor='center'),
     font=dict(size=25),
     showlegend=False,
@@ -82,14 +86,28 @@ def relative_error_inversion(fun, invfun, x):
 fig = go.Figure(data=[
     go.Scatter(name='Base-2',
                x=x, y=relative_error_inversion(logistic, logit, x),
-               opacity=0.5, line=dict(color='#d95f02')),
+               opacity=0.5, line=dict(color='#d95f02'),
+               showlegend=False),
+    go.Scatter(name='Base-2',
+               x=[None], y=[None],
+               mode='lines',
+               line=dict(width=5, color='#d95f02'),
+    ),
     go.Scatter(name='NQT',
                x=x, y=relative_error_inversion(logistic_nqt, logit_nqt, x),
-               opacity=0.5, line=dict(color='#1b9e77')),
+               opacity=0.5, line=dict(color='#66c2a5'),
+               showlegend=False),
+    go.Scatter(name='NQT',
+               x=[None], y=[None],
+               mode='lines',
+               line=dict(width=5, color='#66c2a5'),
+    ),
 ])
 fig.update_xaxes(range=[x.min() - 0.02, x.max() + 0.02])
 fig.update_yaxes(type='log', dtick=1)
 fig.update_layout(
+    height=350,
+    width=700,
     title=dict(text='Relative inversion error', x=0.5, xanchor='center'),
     font=dict(size=25),
     yaxis=dict(

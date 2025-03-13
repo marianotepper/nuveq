@@ -53,23 +53,23 @@ fig.update_yaxes(range=[-1.05, 1.05], row=1, col=2)
 fig.update_annotations(font_size=25)
 
 fig.update_layout(
-    height=600,
+    height=300,
     width=1200,
     xaxis1=dict(
-        tickfont=dict(size=25)),
+        tickfont=dict(size=20)),
     yaxis1= dict(
-        tickfont=dict(size=25)),
+        tickfont=dict(size=20)),
     xaxis2=dict(
-        tickfont=dict(size=25)),
+        tickfont=dict(size=20)),
     yaxis2=dict(
-        tickfont=dict(size=25)),
+        tickfont=dict(size=20)),
     autosize=True,
-    margin={'l': 0, 'r': 0, 't': 0, 'b': 0},
+    margin={'l': 0, 'r': 0, 't': 30, 'b': 0},
     legend=dict(
         yanchor="top",
         y=0.99,
         xanchor="left",
-        x=0.01),
+        x=1.05),
 )
 fig.show()
 write_image(fig, 'logistic_parameter_examples.png', scale=3)
