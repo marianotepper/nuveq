@@ -3,9 +3,9 @@ import plotly.graph_objects as go
 
 from plot_utils import write_image
 
-small_font = 30
-medium_font = 40
-large_font = 40
+small_font = 35
+medium_font = 45
+large_font = 45
 
 print("Plotly version:", plotly.__version__)
 
