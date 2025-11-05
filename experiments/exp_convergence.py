@@ -15,7 +15,7 @@ pio.kaleido.scope.mathjax = None
 
 
 def plot_convergence_single_vector(dirname, dataset_name, n_bits, id):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
     data = dataset.X_db
     data -= np.mean(data, axis=0, keepdims=True)
     vector = data[id]

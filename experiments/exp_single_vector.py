@@ -15,7 +15,7 @@ pio.templates.default = "plotly_white"
 
 def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx,
                              n_bits=8):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
     data = dataset.X_db
     data -= np.mean(data, axis=0, keepdims=True)
     vector = data[idx]
@@ -184,7 +184,10 @@ def plot_nuveq_single_vector(dirname, dataset_name, nonlinearity, idx,
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     idx = 1
     for dataset_name in ['ada002-100k', 'openai-v3-small-100k']:

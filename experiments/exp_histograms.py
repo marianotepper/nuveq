@@ -1,7 +1,6 @@
 import numpy as np
 import plotly.figure_factory as ff
 import plotly.io as pio
-import plotly.graph_objects as go
 import sys
 
 from datasets import select_dataset
@@ -11,7 +10,7 @@ pio.templates.default = "plotly_white"
 
 
 def plot_histograms(dirname, dataset_name, ids):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
 
     X = dataset.X_db
     X -= np.mean(X, axis=0, keepdims=True)
@@ -57,7 +56,10 @@ def plot_histograms(dirname, dataset_name, ids):
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     plot_histograms(dirname, 'gecko-100k', [2, 4, 8, 10])
     plot_histograms(dirname, 'openai-v3-small-100k', [2, 4, 6, 8])

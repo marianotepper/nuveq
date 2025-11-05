@@ -13,7 +13,7 @@ pio.templates.default = "plotly_white"
 
 
 def plot_nuveq_subvectors(dirname, dataset_name, n_bits, n_samples=10_000):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
     print(dataset.name)
 
     data = dataset.X_db
@@ -72,7 +72,10 @@ def plot_nuveq_subvectors(dirname, dataset_name, n_bits, n_samples=10_000):
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     dataset_name = 'ada002-100k'
     plot_nuveq_subvectors(dirname, dataset_name, 4, n_samples=10_000)

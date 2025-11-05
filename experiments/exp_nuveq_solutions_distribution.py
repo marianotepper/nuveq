@@ -14,7 +14,7 @@ pio.templates.default = "plotly_white"
 
 def plot_nuveq_solutions(dirname, dataset_name, nonlinearity, plot_title,
                          xaxes_title, yaxes_title, n_samples=10_000):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
     data = dataset.X_db
     data -= np.mean(data, axis=0, keepdims=True)
     data = data[:n_samples]
@@ -57,7 +57,10 @@ def plot_nuveq_solutions(dirname, dataset_name, nonlinearity, plot_title,
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     for dataset_name in ['gecko-100k', 'ada002-100k']:
         for nonlinearity, plot_title, xaxes_title, yaxes_title in [

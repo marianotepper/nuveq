@@ -12,7 +12,7 @@ pio.templates.default = "plotly_white"
 
 
 def plot_nuveq_multi_vector(dirname, dataset_name, n_samples=10_000):
-    dataset = select_dataset(dirname, dataset_name)
+    dataset = select_dataset(dataset_name, dirname=dirname)
 
     data = dataset.X_db
     data -= np.mean(data, axis=0, keepdims=True)
@@ -124,7 +124,10 @@ def plot_nuveq_multi_vector(dirname, dataset_name, n_samples=10_000):
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     plot_nuveq_multi_vector(dirname, 'ada002-100k',
                             n_samples=10_000)

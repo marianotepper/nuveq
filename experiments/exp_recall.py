@@ -156,10 +156,13 @@ def plot_nuveq_multi_vector(dataset, n_bits):
 
 
 def main():
-    dirname = sys.argv[1]
+    if len(sys.argv) == 2:
+        dirname = sys.argv[1]
+    else:
+        dirname = './wikipedia_squad'
 
     for dataset_name in ['ada002-100k', 'openai-v3-small-100k']:
-        dataset = select_dataset(dirname, dataset_name)
+        dataset = select_dataset(dataset_name, dirname=dirname)
         print(dataset.name)
         plot_nuveq_multi_vector(dataset, 4)
         plot_nuveq_multi_vector(dataset, 8)
