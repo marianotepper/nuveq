@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import os
 
-from experiments import datasets as downloader
-import datasets as vecs_io
+import datasets.downloader as downloader
+import datasets.vecs_io as vecs_io
 
 
 @dataclass
